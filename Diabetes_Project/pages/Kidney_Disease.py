@@ -12,7 +12,7 @@ st.markdown("""
         .title {
             font-size: 40px;
             font-weight: 700;
-            color: #2A4D69;
+            color: white;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -54,3 +54,4 @@ with st.form("kidney_form"):
 if submitted:
     st.warning("⚠️ Prediction model not connected yet.")
     st.info("🔧 Please integrate the ML model once ready.")
+
