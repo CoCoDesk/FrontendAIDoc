@@ -7,15 +7,15 @@ import os
 st.set_page_config(page_title="Kidney Disease Prediction", layout="wide")
 
 # ---------------- LOAD MODEL ----------------
-# Correct path to cancer.pkl (works on Streamlit Cloud)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "kidney.pkl")
 
-# Load Cancer Model
-with open(MODEL_PATH, "rb") as file:
-    model = pickle.load(file)
-
-
+try:
+    with open(MODEL_PATH, "rb") as file:
+        model = pickle.load(file)
+except Exception as e:
+    st.error(f"Model loading failed: {e}")
+    st.stop()
 
 # ------------------- HEADER --------------------
 st.markdown("""
@@ -56,12 +56,12 @@ with col2:
     htn = st.number_input("Hypertension (htn)", 0, 1, 0)
     dm = st.number_input("Diabetes Mellitus (dm)", 0, 1, 0)
 
-# exactly **18 features** sent here ↓
-input_data = np.array([[age, bp, al, su, bgr, bu, sc,
-                        pot, pc, pcc, ba, b, rbc,
-                        wc, htn, dm, 0, 0]])
-
-# last two zeros are placeholders for removed missing columns to match model shape
+# **18 FEATURES** — EXACT MATCH WITH YOUR MODEL
+input_data = np.array([[ 
+    age, bp, al, su, bgr, bu, sc,
+    pot, pc, pcc, ba, b, rbc,
+    wc, htn, dm, 0, 0   # final 2 columns that model expects
+]])
 
 # ------------------- PREDICTION --------------------
 if st.button("Predict"):
@@ -74,8 +74,4 @@ if st.button("Predict"):
             st.success("✔ No CKD Detected. You are Safe!")
 
     except Exception as e:
-        st.warning(f"Error: {e}")
-
-
-
-
+        st.warning(f"Prediction Error: {e}")
