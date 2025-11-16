@@ -80,28 +80,26 @@
 
 
 
+
 import streamlit as st
 import pickle
 import numpy as np
 import os
 
-# Correct path to liver.pkl
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "liver.pkl")
+MODEL_PATH = os.path.join(BASE_DIR, "liver (1).pkl")
 
-# Load model
-with open(MODEL_PATH, "rb") as file:
-    model = pickle.load(file)
+# Load pipeline (imputer + scaler + model)
+with open(MODEL_PATH, "rb") as f:
+    pipeline = pickle.load(f)
 
 st.title("🧬 Liver Disease Prediction Web App")
-st.write("Enter the patient details below:")
+st.write("Enter the required details below:")
 
-# User Inputs
 age = st.number_input("Age", min_value=1, max_value=120, value=45)
-
-# Your model expects encoded values → 1 for Male, 0 for Female
 gender_str = st.selectbox("Gender", ["Male", "Female"])
-gender = 1 if gender_str == "Male" else 0   # 🔥 FIXED
+# This pipeline expects numeric gender (Male=1, Female=0)
+gender = 1 if gender_str == "Male" else 0
 
 total_bil = st.number_input("Total Bilirubin", min_value=0.0, max_value=75.0, value=1.0)
 direct_bil = st.number_input("Direct Bilirubin", min_value=0.0, max_value=30.0, value=0.5)
@@ -113,27 +111,21 @@ albumin = st.number_input("Albumin", min_value=0.0, max_value=10.0, value=3.0)
 ag_ratio = st.number_input("A/G Ratio", min_value=0.0, max_value=3.0, value=1.0)
 
 if st.button("Predict"):
+    X = np.array([[age, gender, total_bil, direct_bil,
+                   alkphos, alt, ast, proteins, albumin, ag_ratio]])
+    pred = pipeline.predict(X)[0]  # 1 = disease, 0 = healthy
 
-    # Make sure features match EXACT model training order
-    input_data = np.array([[age, gender, total_bil, direct_bil,
-                            alkphos, alt, ast, proteins,
-                            albumin, ag_ratio]])
+    st.write("DEBUG model output:", int(pred))
 
-    result = model.predict(input_data)[0]  # Result is 1 or 2
-
-    # ILPD label meaning:
-    # 1 = Liver Disease
-    # 2 = No Liver Disease
-
-    if result == 1:
+    if pred == 1:
         st.error("🔴 **High Chance of Liver Disease**")
-        st.subheader("Advice:")
+        st.subheader("Medical Advice:")
         st.write("""
         - Avoid alcohol  
         - Reduce fatty foods  
         - Drink plenty of fluids  
         - Consult a hepatologist  
-        - Take LFT & ultrasound  
+        - Get LFT & ultrasound  
         """)
     else:
         st.success("🟢 **No Liver Disease Detected**")
