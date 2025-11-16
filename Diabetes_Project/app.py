@@ -90,6 +90,85 @@ with col6:
         st.switch_page("pages/Parkinsons.py")
     st.markdown("</div>", unsafe_allow_html=True)
 
+# -------------------- PERFECT FLOATING CHATBOT BUTTON --------------------
+
+# 1. CSS styles to target the Streamlit button
+st.markdown("""
+<style>
+/* This container holds the visual elements (label + button) */
+#chat-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Aligns circle to be centered */
+}
+
+/* Label box */
+.chat-label {
+    background: #003566;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+/* This is the DIV that will WRAP the Streamlit button.
+   We need it to apply our custom styles to the button inside.
+*/
+#chat-button-wrapper {
+    width: 70px;
+    height: 70px;
+}
+
+/* This targets the actual Streamlit button element INSIDE the wrapper */
+#chat-button-wrapper button {
+    width: 70px;         /* Make the button a circle */
+    height: 70px;        /* Make the button a circle */
+    padding: 0;          /* Remove default padding */
+    border: none;        /* Remove default border */
+    background: #003566; /* Set the background color */
+    color: white;        /* Set the icon color */
+    border-radius: 50%;  /* Make it a circle */
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.3);
+    transition: 0.3s;
+    font-size: 35px;     /* Size for the emoji */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Hover effect for the button */
+#chat-button-wrapper button:hover {
+    transform: scale(1.12);
+    background: #002244;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# 2. The VISUAL and FUNCTIONAL button
+# We place the label and the button wrapper inside the main container
+st.markdown('<div id="chat-container">', unsafe_allow_html=True)
+
+# Visual Label
+st.markdown('<div class="chat-label">Instant Cure?<br>Talk to our AI DocBot</div>', unsafe_allow_html=True)
+
+# Functional, Styled Button
+# We place the button inside the wrapper div to style it
+st.markdown('<div id="chat-button-wrapper">', unsafe_allow_html=True)
+if st.button("🤖", key="floating_chat_button"): # Use emoji as button content
+    st.switch_page("pages/AIDocBot.py")
+st.markdown('</div>', unsafe_allow_html=True) # Close wrapper
+
+st.markdown('</div>', unsafe_allow_html=True) # Close container
+
 
 # -------------------- FOOTER --------------------
 st.markdown("""
@@ -98,3 +177,4 @@ st.markdown("""
     <p>© 2025 Family AI Doctor — All Rights Reserved</p>
 </div>
 """, unsafe_allow_html=True)
+
