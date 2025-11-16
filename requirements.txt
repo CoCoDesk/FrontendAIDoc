@@ -6,4 +6,4 @@ xgboost
 lightgbm
 imblearn
 joblib
-scikit-learn==1.3.2
+scikit-learn==1.3.4
