@@ -6,7 +6,8 @@ import numpy as np
 st.set_page_config(page_title="Kidney Disease Prediction", layout="wide")
 
 # ---------------- LOAD MODEL ----------------
-model = pickle.load(open("kidney.pkl", "rb"))
+model = pickle.load(open("pages/kidney.pkl", "rb"))
+
 
 # ------------------- HEADER --------------------
 st.markdown("""
@@ -66,3 +67,4 @@ if st.button("Predict"):
 
     except Exception as e:
         st.warning(f"Error: {e}")
+
