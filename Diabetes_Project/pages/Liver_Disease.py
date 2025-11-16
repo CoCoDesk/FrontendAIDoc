@@ -80,13 +80,12 @@
 
 
 
-
 import streamlit as st
 import pickle
 import numpy as np
 import os
 
-# Correct path to liver.pkl (Streamlit Cloud compatible)
+# Correct path to liver.pkl
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "liver.pkl")
 
@@ -95,11 +94,15 @@ with open(MODEL_PATH, "rb") as file:
     model = pickle.load(file)
 
 st.title("🧬 Liver Disease Prediction Web App")
-st.write("Enter the required details below:")
+st.write("Enter the patient details below:")
 
 # User Inputs
 age = st.number_input("Age", min_value=1, max_value=120, value=45)
-gender = st.selectbox("Gender", ["Male", "Female"])  # CORRECTED ❗
+
+# Your model expects encoded values → 1 for Male, 0 for Female
+gender_str = st.selectbox("Gender", ["Male", "Female"])
+gender = 1 if gender_str == "Male" else 0   # 🔥 FIXED
+
 total_bil = st.number_input("Total Bilirubin", min_value=0.0, max_value=75.0, value=1.0)
 direct_bil = st.number_input("Direct Bilirubin", min_value=0.0, max_value=30.0, value=0.5)
 alkphos = st.number_input("Alkaline Phosphotase", min_value=50, max_value=3000, value=250)
@@ -109,35 +112,35 @@ proteins = st.number_input("Total Proteins", min_value=0.0, max_value=10.0, valu
 albumin = st.number_input("Albumin", min_value=0.0, max_value=10.0, value=3.0)
 ag_ratio = st.number_input("A/G Ratio", min_value=0.0, max_value=3.0, value=1.0)
 
-# Predict
 if st.button("Predict"):
 
+    # Make sure features match EXACT model training order
     input_data = np.array([[age, gender, total_bil, direct_bil,
-                            alkphos, alt, ast, proteins, albumin, ag_ratio]])
+                            alkphos, alt, ast, proteins,
+                            albumin, ag_ratio]])
 
-    result = model.predict(input_data)[0]  # will be 1 or 2
+    result = model.predict(input_data)[0]  # Result is 1 or 2
 
-    # ILPD dataset meaning:
+    # ILPD label meaning:
     # 1 = Liver Disease
-    # 2 = Healthy
+    # 2 = No Liver Disease
 
     if result == 1:
         st.error("🔴 **High Chance of Liver Disease**")
-        st.subheader("Medical Advice:")
+        st.subheader("Advice:")
         st.write("""
         - Avoid alcohol  
         - Reduce fatty foods  
-        - Drink plenty of water  
-        - Take liver supplements only under doctor guidance  
-        - Go for LFT & ultrasound  
+        - Drink plenty of fluids  
+        - Consult a hepatologist  
+        - Take LFT & ultrasound  
         """)
-
     else:
         st.success("🟢 **No Liver Disease Detected**")
         st.subheader("Healthy Liver Tips:")
         st.write("""
         - Stay hydrated  
-        - Avoid heavy alcohol  
+        - Avoid junk foods  
         - Exercise regularly  
-        - Avoid junk & fatty foods  
+        - Avoid excessive alcohol  
         """)
