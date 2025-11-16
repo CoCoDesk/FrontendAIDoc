@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import numpy as np
+import os
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Kidney Disease Prediction", layout="wide")
@@ -74,6 +75,7 @@ if st.button("Predict"):
 
     except Exception as e:
         st.warning(f"Error: {e}")
+
 
 
 
