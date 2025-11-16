@@ -1,78 +1,56 @@
-# import streamlit as st
-# import pickle
-# import numpy as np
-# import os
+import streamlit as st
 
-# # ---------------- PAGE CONFIG ----------------
-# st.set_page_config(page_title="Kidney Disease Prediction", layout="wide")
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(page_title="Kidney Disease Predictor", layout="wide")
 
-# # ---------------- LOAD MODEL ----------------
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# MODEL_PATH = os.path.join(BASE_DIR, "kidney.pkl")
+# ---------------- STYLING ----------------
+st.markdown("""
+    <style>
+        body {
+            background-color: white;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #2A4D69;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 20px;
+            text-align: center;
+            color: #4F4F4F;
+            margin-bottom: 40px;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# try:
-#     with open(MODEL_PATH, "rb") as file:
-#         model = pickle.load(file)
-# except Exception as e:
-#     st.error(f"Model loading failed: {e}")
-#     st.stop()
+# ---------------- HEADER ----------------
+st.markdown('<div class="title">🩺 Kidney Disease Prediction</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Enter patient details below to check kidney health</div>', unsafe_allow_html=True)
 
-# # ------------------- HEADER --------------------
-# st.markdown("""
-#     <div style="background-color:#f8f9fa; padding:25px; border-radius:20px; 
-#                 box-shadow:0 4px 12px rgba(0,0,0,0.1);">
-#         <h1 style="text-align:center; font-size:40px; color:#2b6777;">
-#             🩺 Kidney Disease Prediction
-#         </h1>
-#         <p style="text-align:center; font-size:18px; color:#555;">
-#             Enter the required health parameters below to check the risk of Chronic Kidney Disease.
-#         </p>
-#     </div>
-#     <br>
-# """, unsafe_allow_html=True)
+# ---------------- INPUT FORM ----------------
+with st.form("kidney_form"):
+    col1, col2 = st.columns(2)
 
-# # ------------------- INPUT FIELDS --------------------
-# st.subheader("Enter Patient Details")
+    with col1:
+        age = st.number_input("Age", min_value=1, max_value=120, step=1)
+        bp = st.number_input("Blood Pressure (mm/Hg)", min_value=50, max_value=200)
+        sg = st.number_input("Specific Gravity", min_value=1.000, max_value=1.050, step=0.001, format="%.3f")
+        al = st.number_input("Albumin Level", min_value=0, max_value=5, step=1)
+        su = st.number_input("Sugar Level", min_value=0, max_value=5, step=1)
 
-# col1, col2 = st.columns(2)
+    with col2:
+        rbc = st.selectbox("Red Blood Cells", ["normal", "abnormal"])
+        pc = st.selectbox("Pus Cell", ["normal", "abnormal"])
+        pcc = st.selectbox("Pus Cell Clumps", ["present", "not present"])
+        ba = st.selectbox("Bacteria", ["present", "not present"])
+        bgr = st.number_input("Blood Glucose Random", min_value=50, max_value=500)
+        bu = st.number_input("Blood Urea", min_value=1, max_value=300)
 
-# with col1:
-#     age = st.number_input("Age", 1, 120, 45)
-#     bp = st.number_input("Blood Pressure (bp)", 50, 200, 80)
-#     al = st.number_input("Albumin (al)", 0, 5, 0)
-#     su = st.number_input("Sugar (su)", 0, 5, 0)
-#     bgr = st.number_input("Blood Glucose Random (bgr)", 50, 500, 120)
-#     bu = st.number_input("Blood Urea (bu)", 1, 300, 40)
-#     sc = st.number_input("Serum Creatinine (sc)", 0.1, 15.0, 1.2)
+    submitted = st.form_submit_button("Predict")
 
-# with col2:
-#     pot = st.number_input("Potassium (pot)", 1.0, 10.0, 4.5)
-#     pc = st.number_input("Pus Cell (pc)", 0, 1, 0)
-#     pcc = st.number_input("Pus Cell Clumps (pcc)", 0, 1, 0)
-#     ba = st.number_input("Bacteria (ba)", 0, 1, 0)
-#     b = st.number_input("Blood (b)", 0, 1, 0)
-#     rbc = st.number_input("Red Blood Cells (rbc)", 0, 1, 0)
-#     wc = st.number_input("White Blood Cell Count (wc)", 1, 30000, 8000)
-#     htn = st.number_input("Hypertension (htn)", 0, 1, 0)
-#     dm = st.number_input("Diabetes Mellitus (dm)", 0, 1, 0)
-
-# # **18 FEATURES** — EXACT MATCH WITH YOUR MODEL
-# input_data = np.array([[ 
-#     age, bp, al, su, bgr, bu, sc,
-#     pot, pc, pcc, ba, b, rbc,
-#     wc, htn, dm, 0, 0   # final 2 columns that model expects
-# ]])
-
-# # ------------------- PREDICTION --------------------
-# if st.button("Predict"):
-#     try:
-#         pred = model.predict(input_data)[0]
-
-#         if pred == 1:
-#             st.error("⚠ High Risk of Chronic Kidney Disease")
-#         else:
-#             st.success("✔ No CKD Detected. You are Safe!")
-
-#     except Exception as e:
-#         st.warning(f"Prediction Error: {e}")
-
+# ---------------- RESULT SECTION ----------------
+if submitted:
+    st.warning("⚠️ Prediction model not connected yet.")
+    st.info("🔧 Please integrate the ML model once ready.")
